@@ -51,7 +51,7 @@ xtrain, residual = RandomSplit(W, p, tries=10)
 ```
 will compute 10 p% splits and return the one with the lowest residual (10 is the default).
 
-Instead of providing a ratio 0 < p <= 1, you may instead provide an integer for the training set size. For example,
+Instead of providing a ratio 0 < p <= 1, you may provide an integer for the training set size. For example,
 ```python
 xtrain, residual = RandomSplit(W, 100)
 ```
