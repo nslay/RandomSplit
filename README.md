@@ -55,7 +55,7 @@ Instead of providing a ratio 0 < p <= 1, you may instead provide an integer for 
 ```python
 xtrain, residual = RandomSplit(W, 100)
 ```
-will pick a training set with 100 examples.
+will pick a training set to have 100 examples.
 
 # Benchmarks
 As a simple test, I performed 100,000 50/50 splits of N=200 cases with K=10 criteria. The baseline method is to just randomly shuffle {0,1,2,...,199} and take the first 50% of the indices as the training set. The indicator vector **x**_train is 1 for each of those indices. The weight matrix W is 10x200 constructed as follows
