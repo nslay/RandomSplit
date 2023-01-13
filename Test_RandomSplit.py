@@ -91,7 +91,7 @@ def RunBenchmark():
             np.random.shuffle(ind)
             W[k, :][ind[:M]] = 0
         
-        assert np.any(W.max(axis=1) > 0) and np.any(W.max(axis=0) > 0)
+        assert np.all(W.max(axis=1) > 0) and np.all(W.max(axis=0) > 0)
         
         expected = np.round(p*W.sum(axis=1)).astype(int)
         
