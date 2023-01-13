@@ -8,7 +8,7 @@ In medical image learning tasks, a single image can have several annotated types
 Suppose you want to sample p% of the images to be your training set so that you have about p% of each kind of pathology/ISUP grade/tumor burden volume/label count/etc...
 
 Given a KxN weight matrix W where N is the number of images and K the number of counting-based criteria, the method proceeds as follows
-1. Compute D = inv(diag(W **1**)), Z = I - 1/K
+1. Compute D = inv(diag(W **1**)), Z = I - 1/K. Here **1** is a vector of 1s.
 2. Compute SVD: USV^T = ZDW
 3. Take Q to be the last N-K+1 column vector of V (the null space of ZDW)
 4. Sample **u** ~ N(0,1) where **u** is an N-K+1 dimensional real vector.
@@ -21,6 +21,21 @@ Each column of the weight matrix W represents one image. The rows represent some
 
 DW**x**_train = p**1**
 
+The matrix Z is a rank K-1 orthogonal projection matrix with null space being c**1**. So we can instead solve this problem
+
+ZDW**x**_train = **0**
+
+DW is probably rank K but it does not matter. We'll assume that ZDW is rank K-1. We can compute the null space with SVD
+
+USV^T = ZDW
+
+And take Q to be the last N-K+1 column vector of V to be the null space. We can sample a random null space vector **x** which will always be a solution to ZDW**x** = **0**
+
+Sample **u** ~ N(0,1) and calculate **x** = Q**u**
+
 # Usage
 
 # Benchmarks
+
+# Remarks
+
