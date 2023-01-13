@@ -8,7 +8,7 @@ In medical image learning tasks, a single image can have several annotated types
 Suppose you want to sample p% of the images to be your training set so that you have about p% of each kind of pathology/ISUP grade/tumor burden volume/label count/etc...
 
 Given a KxN weight matrix W where N is the number of images and K the number of counting-based criteria, the method proceeds as follows
-1. Compute D = inv(diag(W **1**)), Z = I - 1/K. Here **1** is a vector of 1s.
+1. Compute D = inv(diag(W**1**)), Z = I - 1/K. Here **1** is a vector of 1s.
 2. Compute SVD: USV^T = ZDW
 3. Take Q to be the last N-K+1 column vector of V (the null space of ZDW)
 4. Sample **u** ~ N(0,1) where **u** is an N-K+1 dimensional real vector.
@@ -36,6 +36,16 @@ Sample **u** ~ N(0,1) and calculate **x** = Q**u**
 Now this solution **x** is *not* an indicator vector! But that's OK. We can always find a linear combination **x**_train = a**x** + b**1** so that **0** <= **x**_train <= **1** and sum(**x**_train) = pN for real numbers a, b. And what do you know, this linear combination remains a solution since DW**1** = **1** and Z**1** = **0**. Thus, picking the top pN components of **x**_train is the same as picking the top pN components of **x**. Hence, you can safely ignore the indicator vector issue and just take **x**_train to have 1s for the top pN components of **x**. The residual |ZDW**x**_train| gives a measurement of how close you are to having the same proportion of everything in your training set (0 being perfect).
 
 # Usage
+Form the weight matrix `W` as a KxN `numpy` array. Be sure to map columns of `W` to your images in your data set somehow. Then just call `RandomSplit` as follows to create a fair p% training set (e.g. p=0.75 for 75/25 split)
+```python
+from RandomSplit import RandomSplit
+
+p=0.75
+xtrain, residual = RandomSplit(W, p)
+xtest = 1-xtrain
+```
+
+To get better random splits, you may specify `tries=#` as an argument to `RandomSplit`. For example, `xtrain, residual = RandomSplit(W, p, tries=10)` will compute 10 p% splits and return the one with the lowest residual.
 
 # Benchmarks
 
