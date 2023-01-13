@@ -29,9 +29,11 @@ DW is probably rank K but it does not matter. We'll assume that ZDW is rank K-1.
 
 USV^T = ZDW
 
-And take Q to be the last N-K+1 column vector of V to be the null space. We can sample a random null space vector **x** which will always be a solution to ZDW**x** = **0**
+And take Q to be the last N-K+1 column vectors of V to be the null space. We can sample a random null space vector **x** which will always be a solution to ZDW**x** = **0**
 
 Sample **u** ~ N(0,1) and calculate **x** = Q**u**
+
+Now this solution **x** is *not* an indicator vector! But that's OK. We can always find a linear combination **x**_train = a**x** + b**1** so that **0** < **x**_train < **1** and sum(**x**_train) = pN for real numbers a, b. And what do you know, this linear combination remains a solution since DW**1** = **1** and Z**1** = **0**. Thus, picking the top pN components of **x**_train is the same as picking the top pN components of **x**. Hence, you can safely ignore the indicator vector issue and just take **x**_train = **x**.
 
 # Usage
 
