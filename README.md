@@ -51,6 +51,12 @@ xtrain, residual = RandomSplit(W, p, tries=10)
 ```
 will compute 10 p% splits and return the one with the lowest residual (10 is the default).
 
+Instead of providing a ratio 0 < p <= 1, you may instead provide an integer for the training set size. For example,
+```python
+xtrain, residual = RandomSplit(W, 100)
+```
+will pick a training set with 100 examples.
+
 # Benchmarks
 As a simple test, I performed 100,000 50/50 splits of N=200 cases with K=10 criteria. The baseline method is to just randomly shuffle {0,1,2,...,199} and take the first 50% of the indices as the training set. The indicator vector **x**_train is 1 for each of those indices. The weight matrix W is 10x200 constructed as follows
 * W[0, :] = 1 -- Each column counts as 1 instance. You don't need necessarily need this row, but this avoids a corner case where somehow p% of the split gives some other q% of each criteria. This row encourages q=p.
