@@ -45,7 +45,11 @@ xtrain, residual = RandomSplit(W, p)
 xtest = 1-xtrain
 ```
 
-To get better random splits, you may specify `tries=#` as an argument to `RandomSplit`. For example, `xtrain, residual = RandomSplit(W, p, tries=10)` will compute 10 p% splits and return the one with the lowest residual.
+To get better random splits, you may specify `tries=#` as an argument to `RandomSplit`. For example, 
+```python
+xtrain, residual = RandomSplit(W, p, tries=10)
+```
+will compute 10 p% splits and return the one with the lowest residual (10 is the default).
 
 # Benchmarks
 
