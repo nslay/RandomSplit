@@ -63,7 +63,7 @@ Mean (standard deviation) of the residuals over the 100,000 runs are tabulated f
 |  1    | 0.20 (0.05) | 0.33 (0.08) |
 |  10   | 0.13 (0.02) | 0.22 (0.04) |
 
-The benchmark can be found in `Test_RandomSplit.py`.
+Here "SVD" is the proposed method and gives the best (lowest) residuals on average. The benchmark can be found in `Test_RandomSplit.py`.
 
 # Remarks
 This method helps in cases where the weight matrix W is sparse and N is not too *large*. If you have a dense weight matrix or N is *large*, simple random shuffling will probably give a good train/test split.
