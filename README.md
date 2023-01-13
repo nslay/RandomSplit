@@ -14,7 +14,7 @@ Given a KxN weight matrix W where N is the number of images and K the number of 
 4. Sample **u** ~ N(0,1) where **u** is an N-K+1 dimensional real vector.
 5. Compute **x** = Q**u**
 6. Take the largest pN components of **x** to be your training set.
-7. Optional: A goodness-of-fit can be computed from the indicator vector **x**_train with 1s in place of the largest pN components and 0s elsewhere. Residual = |ZDW| where |.| is a matrix norm.
+7. Optional: A goodness-of-fit can be computed from the indicator vector **x**_train with 1s in place of the largest pN components and 0s elsewhere. Residual = |ZDW**x**_train| where |.| is a norm.
 
 # How it Works
 Each column of the weight matrix W represents one image. The rows represent some kind of count of pathology, ISUP grades, tumor volume, label count, etc... The vector W**1** gives a total count/sum of all pathologies, ISUP grades, tumor volumes, etc... The matrix DW gives weighted columns so that DW**1** = **1**. You want to sample p% of the images so that you also have about p% of each pathology, ISUP grade, total tumor volume, etc... In other words, you want an indicator vector **x**_train with pN 1s that gives
