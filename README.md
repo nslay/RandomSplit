@@ -60,7 +60,7 @@ will pick a training set to have 100 examples.
 # Benchmarks
 As a simple test, I performed 100,000 50/50 splits of N=200 cases with K=10 criteria. The baseline method is to just randomly shuffle {0,1,2,...,199} and take the first 50% of the indices as the training set. The indicator vector **x**_train is 1 for each of those indices. The weight matrix W is 10x200 constructed as follows
 * W[0, :] = 1 -- Each column counts as 1 instance. You don't need necessarily need this row, but this avoids a corner case where somehow p% of the split gives some other q% of each criteria. This row encourages q=p.
-* W[1-9, :] ~ U[1,100)
+* W[1-9, :] ~ U[1,10)
 * For each row in rows 1-9, 90% of all columns are suppressed to 0.
 
 Mean (standard deviation) of the residuals over the 100,000 runs are tabulated for both methods
