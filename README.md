@@ -7,7 +7,7 @@ In medical image learning tasks, a single image can have several annotated types
 # The Method
 Suppose you want to sample p% of the images to be your training set so that you have about p% of each kind of pathology/ISUP grade/tumor burden volume/label count/etc...
 
-Given a KxN weight matrix W where N is the number of images and K the number of counting-based criteria, the method proceeds as follows
+Given a KxN weight matrix W *with non-zero rows* where N is the number of images and K the number of counting-based criteria, the method proceeds as follows
 1. Compute D = inv(diag(W**1**)), Z = I - 1/K. Here **1** is a vector of 1s.
 2. Compute SVD: USV^T = ZDW
 3. Take Q to be the last N-K+1 column vector of V (the null space of ZDW)
@@ -15,6 +15,10 @@ Given a KxN weight matrix W where N is the number of images and K the number of 
 5. Compute **x** = Q**u**
 6. Take the largest pN components of **x** to be your training set.
 7. Optional: A goodness-of-fit can be computed from the indicator vector **x**_train with 1s in place of the largest pN components and 0s elsewhere. Residual = |ZDW**x**_train| where |.| is a norm.
+
+**NOTE**: A weight matrix W with some zero rows can be modified into a new weight matrix W' with non-zero rows by simply discarding the zero rows of W. The script in this repository automatically performs this check and modification.
+
+**NOTE**: Columns should ideally be non-zero too. A zero column would seem to suggest no annotation is associated with some instance. If you somehow find yourself in this strange situation, add a *self count* row where each instance counts as 1. See the [Benchmarks section](#Benchmarks) below for an example. 
 
 # How it Works
 Each column of the weight matrix W represents one image. The rows represent some kind of count of pathology, ISUP grades, tumor volume, label count, etc... The vector W**1** gives a total count/sum of all pathologies, ISUP grades, tumor volumes, etc... The matrix DW gives weighted columns so that DW**1** = **1**. You want to sample p% of the images so that you also have about p% of each pathology, ISUP grade, total tumor volume, etc... In other words, you want an indicator vector **x**_train with pN 1s that gives
@@ -58,10 +62,11 @@ xtrain, residual = RandomSplit(W, 100)
 will pick a training set to have 100 examples.
 
 # Benchmarks
-As a simple test, I performed 100,000 runs of 50/50 splits of N=200 cases with K=10 criteria. The baseline method is to just randomly shuffle {0,1,2,...,199} and take the first 50% of the indices as the training set. The indicator vector **x**_train is 1 for each of those indices. The weight matrix W is 10x200 and is randomly constructed for each run as follows
+As a simple test, I performed 100,000 runs of 50/50 splits of N=200 cases with K=11 criteria. The baseline method is to just randomly shuffle {0,1,2,...,199} and take the first 50% of the indices as the training set. The indicator vector **x**_train is 1 for each of those indices. The weight matrix W is 10x200 and is randomly constructed for each run as follows
 * W[0, :] = 1 -- Each column counts as 1 instance. You don't necessarily need this row, but this avoids a corner case where somehow a p% split gives some other q% of each criteria. This row encourages q=p.
-* W[1-9, :] ~ U[1,10)
-* For each row in rows 1-9, a random 90% of all columns are suppressed to 0.
+* W[1-6 and 8-10, :] ~ U[1,10)
+* W[7, :] = 0 -- This tests automatic removal of rows where no instance counts (effectively means K=10).
+* For each row in rows 1-10, a random 90% of all columns are suppressed to 0.
 
 Mean (standard deviation) of the residuals over the 100,000 runs are tabulated for both methods
 | Tries |     SVD     |   Random    |
