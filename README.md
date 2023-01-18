@@ -74,6 +74,7 @@ Mean (standard deviation) of the residuals over the 100,000 runs are tabulated f
 |  1    | 0.20 (0.05) | 0.33 (0.08) |
 |  10   | 0.13 (0.02) | 0.22 (0.04) |
 |  100  | 0.09 (0.01) | 0.15 (0.02) |
+|  1000 | 0.07 (0.01) | 0.11 (0.02) |
 
 Here "SVD" is the proposed method and gives the best (lowest) residuals on average. The benchmark can be found in `Test_RandomSplit.py`.
 
