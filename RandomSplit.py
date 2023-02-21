@@ -32,6 +32,9 @@ def RandomSplit(W, training_size, tries=10):
     
     if training_size == 0:
         return np.zeros(N, dtype=int), 0.0
+        
+    if training_size == N:
+        return np.ones(N, dtype=int), 0.0
     
     # Remove rows with no counts over any instance
     D = W.sum(axis=1)
@@ -51,11 +54,6 @@ def RandomSplit(W, training_size, tries=10):
     # This is ZDW
     W = Z @ W
     
-    if training_size == N:
-        xtrain = np.ones(N, dtype=int)
-        res = np.inner(W, xtrain)
-        return xtrain, res
-
     U, S, Vh = np.linalg.svd(W)
     
     Q = Vh[(K-1):, :].T
