@@ -26,12 +26,12 @@ def RandomSplit(W, training_size, tries=10):
     if training_size < 1:
         training_size = int(training_size*N)
         
-    assert training_size > 0 and training_size <= N
+    assert training_size >= 0 and training_size <= N
     
     assert np.all(W.max(axis=0) > 0) # Make sure all instances count for something
     
-    if training_size == N:
-        return np.ones(N, dtype=int)
+    if training_size == 0:
+        return np.zeros(N, dtype=int), 0.0
     
     # Remove rows with no counts over any instance
     D = W.sum(axis=1)
@@ -50,6 +50,11 @@ def RandomSplit(W, training_size, tries=10):
     
     # This is ZDW
     W = Z @ W
+    
+    if training_size == N:
+        xtrain = np.ones(N, dtype=int)
+        res = np.inner(W, xtrain)
+        return xtrain, res
 
     U, S, Vh = np.linalg.svd(W)
     
@@ -74,3 +79,58 @@ def RandomSplit(W, training_size, tries=10):
             bestX = x
     
     return bestX, bestRes
+
+def MakeRandomSplit(W, training_size, testing_size, column_map, tries=10):
+    assert W.ndim == 2
+    
+    N = W.shape[1]
+    
+    assert N <= len(column_map)
+    
+    if training_size < 1:
+        training_size = int(training_size*N)
+        
+    if testing_size < 1:
+        testing_size = int(testing_size*N)
+        
+    assert training_size >= 0 and testing_size >= 0 and training_size + testing_size <= N
+    
+    validation_size = N - (training_size + testing_size)
+    
+    xtest, restest = RandomSplit(W, testing_size, tries=tries)
+    xtrainval = 1-xtest
+    
+    testing_list = []
+    
+    for i in np.argwhere(xtest):
+        cases = column_map[int(i)] # One column could represent a single patient with multiple scans!
+        
+        if not isinstance(cases, list):
+            cases = [ cases ]
+        
+        testing_list += cases
+
+    Wtrainval = W[:, np.argwhere(xtrainval).squeeze(-1)]
+    
+    column_map_trainval = []
+    
+    for i in np.argwhere(xtrainval):
+        column_map_trainval.append(column_map[int(i)])
+        
+    xtrain, restrain = RandomSplit(Wtrainval, training_size, tries=tries)
+    
+    validation_list = []
+    training_list = []
+    
+    for i in range(len(xtrain)):
+        cases = column_map_trainval[i]
+        
+        if not isinstance(cases, list):
+            cases = [ cases ]
+            
+        if xtrain[i]:
+            training_list += cases
+        else:
+            validation_list += cases
+            
+    return training_list, testing_list, validation_list, restrain, restest

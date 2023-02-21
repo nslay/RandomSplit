@@ -37,9 +37,31 @@ And take Q to be the last N-K+1 column vectors of V to be the null space. We can
 
 Sample **u** ~ N(0,1) and calculate **x** = Q**u**
 
-Now this solution **x** is *not* an indicator vector! But that's OK. We can always find a linear combination **x**_train = a**x** + b**1** so that **0** <= **x**_train <= **1** and sum(**x**_train) = pN for real numbers a, b. And what do you know, this linear combination remains a solution since DW**1** = **1** and Z**1** = **0**. Thus, picking the top pN components of **x**_train is the same as picking the top pN components of **x**. Hence, you can safely ignore the indicator vector issue and just take **x**_train to have 1s for the top pN components of **x**. The residual |ZDW**x**_train| gives a measurement of how close you are to having the same proportion of everything in your training set (0 being perfect).
+Now this solution **x** is *not* an indicator vector! But that's OK. We can always find a linear combination **x**_train = a**x** + b**1** for a *soft* form of an indicator vector with **0** <= **x**_train <= **1** and sum(**x**_train) = pN for real numbers a, b. And what do you know, this linear combination remains a solution since DW**1** = **1** and Z**1** = **0**. Thus, picking the top pN components of **x**_train is the same as picking the top pN components of **x**. Hence, you can safely ignore the indicator vector issue and just take **x**_train to have 1s for the top pN components of **x**. The residual |ZDW**x**_train| gives a measurement of how close you are to having the same proportion of everything in your training set (0 being perfect).
 
 # Usage
+Form the weight matrix `W` as a KxN `numpy` array. Be sure to create a list or dictionary `column_map` that maps column indices of `W` to image/patient identifiers. The `column_map` may map to single elements or lists of elements. The latter is useful if your columns represent patients but patients were imaged multiple times. Then `column_map` might map to a list of scans for a patient. This prevents contamination of different scans from the same patient across training, validation and test sets. Then just call `MakeRandomSplit` as follows to create a fair (p,q,r)% training, testing and validation set (e.g. p=0.65, q=0.25 and r=0.1 for 65/25/10 training, testing, validation split).
+```python
+from RandomSplit import MakeRandomSplit
+
+p_train=0.65
+p_test=0.25
+train_list, test_list, val_list, res_train, res_test = MakeRandomSplit(W, p_train, p_test, column_map, tries=10)
+```
+The resulting lists can then be directly used or saved to file for training. The `res_train` and `res_test` returns are the goodness-of-fit residuals for the two splitting operations.
+
+You may optionally pass in integer sizes in place of `p_train` and `p_test`. For example if N=200, this would give similar results as the previous example
+```python
+from RandomSplit import MakeRandomSplit
+
+N_train=130
+N_test=50
+train_list, test_list, val_list, res_train, res_test = MakeRandomSplit(W, N_train, N_test, column_map)
+```
+
+**NOTE**: If your column map maps to lists of identifiers, it would be a good idea to have *self count* row where each column is the length of the list.
+
+# Indicator Vector Usage
 Form the weight matrix `W` as a KxN `numpy` array. Be sure to map columns of `W` to your images in your data set somehow. Then just call `RandomSplit` as follows to create a fair p% training set (e.g. p=0.75 for 75/25 split)
 ```python
 from RandomSplit import RandomSplit
@@ -55,7 +77,7 @@ xtrain, residual = RandomSplit(W, p, tries=10)
 ```
 will compute 10 p% splits and return the one with the lowest residual (10 is the default).
 
-Instead of providing a ratio 0 < p <= 1, you may provide an integer for the training set size. For example,
+Instead of providing a ratio 0 < p < 1, you may provide an integer for the training set size. For example,
 ```python
 xtrain, residual = RandomSplit(W, 100)
 ```
