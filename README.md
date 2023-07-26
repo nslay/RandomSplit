@@ -103,3 +103,9 @@ Here "SVD" is the proposed method and gives the best (lowest) residuals on avera
 # Remarks
 This method helps in cases where the weight matrix W is sparse and N is not too *large*. If you have a dense weight matrix or N is *large*, simple random shuffling will probably give a good train/test split.
 
+**NOTE** This remark is hinted by the following bound:
+
+|ZDWx_train| <= N sqrt(min(p, 1-p)) sqrt(sum_{n=1}^N var((DW)_n))
+
+where (DW)_n is the n'th column of matrix DW and p is the training sample proportion. The bound is tighter when N is *small* and/or DW is sparse. Sparse DW results in columns with lower variance. Counterintuitively, increasing criteria (K) helps give better splits?
+
