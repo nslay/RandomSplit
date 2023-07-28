@@ -111,7 +111,7 @@ where (DW)_n is the n'th column of matrix DW and p is the training sample propor
 
 Here's another bound in terms of absolute difference between binary indicator vector **x**_train and approximate soft indicator vector a**x** + b**1**
 
-|ZDWx_train| = |ZDW(a**x** + b**1** - x_train)| <= sqrt(K) sqrt(sum_{n=1}^N var((DW)_n)) |a**x** + b**1** - x_train| <= sqrt(KN)/2 sqrt(sum\_{n=1}^N var((DW)_n)
+|ZDWx_train| = |ZDW(a**x** + b**1** - x_train)| <= sqrt(K) sqrt(sum_{n=1}^N var((DW)_n)) |a**x** + b**1** - x_train| <= sqrt(KN)/2 sqrt(sum\_{n=1}^N var((DW)_n))
 
 The bound would be tight if your soft indicator vector is *nearly* a binary vector.
 
