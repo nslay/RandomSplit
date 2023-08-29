@@ -51,9 +51,10 @@ training_f = val_f^c = X_{0 <= n < floor(f*N/F)} union X_{floor((f+1)*N/F) <= n 
 Because X represents sorted indices, this partitioning of X can be thought of in terms of disjoint X_top, X_mid and X_bottom largest **x** values. In this case, the f'th fold can be thought of as below
 
 val_f = X_mid
+
 training_f = X_top union X_bottom
 
-From random splitting, we saw that the top p% and bottom (1-p)% of sorted values gives DW**x**_train ~ p**1** and DW**x**_test ~ (1-p)**1**. So if we divide this into the top p%, middle q% and bottom r% with p+q+r = 1, this give DW**x**_mid ~ q**1** since DW(**x**_top + **x**_mid + **x**_bottom) = DW**1** = **1**. Although we do not actually need to concern ourselves with the values of p, q and r. Conventional cross validation folds of such X remain theoretically balanced.
+From random splitting, we saw that the top p% and bottom (1-p)% of sorted values gives DW**x**_train ~ p**1** and DW**x**_test ~ (1-p)**1**. So if we divide this into the top p%, middle q% and bottom r% with p+q+r = 1, this gives DW**x**_mid ~ q**1** since DW(**x**_top + **x**_mid + **x**_bottom) = DW**1** = **1**. Although we do not actually need to concern ourselves with the values of p, q and r. Conventional cross validation folds of such X remain theoretically balanced.
 
 # Random Split Usage
 Form the weight matrix `W` as a KxN `numpy` array. Be sure to create a list or dictionary `column_map` that maps column indices of `W` to image/patient identifiers. The `column_map` may map to single elements or lists of elements. The latter is useful if your columns represent patients but patients were imaged multiple times. Then `column_map` might map to a list of scans for a patient. This prevents contamination of different scans from the same patient across training, validation and test sets. Then just call `MakeRandomSplit` as follows to create a fair (p,q,r)% training, testing and validation set (e.g. p=0.65, q=0.25 and r=0.1 for 65/25/10 training, testing, validation split).
@@ -88,7 +89,7 @@ training_lists, validation_lists, test_list, res, res_test = MakeBalancedCrossVa
 ```
 In this example, there will be 5 training and validation lists and a single test list comprised of 25% of the total data set. The `res` variable will hold a list of goodness-of-fits for each fold while `res_test` will be the goodness-of-fit for the test list partition (if any). You may choose not to create a separate test set and set `p_test=0.0`.
 
-**NOTE**: By default, the best cross validation partitioning is determine by the maximum residual over the individual folds. You may change what is considered *best* by setting the `aggregator` argument in `MakeBalancedCrossValidation` (by default `aggregator=np.max`).
+**NOTE**: By default, the best cross validation partitioning is determined by the maximum residual over the individual folds. You may change what is considered *best* by setting the `aggregator` argument in `MakeBalancedCrossValidation` (by default `aggregator=np.max`).
 
 You may optionally pass in an integer size in place of `p_test`. For example if N=200, this would give similar results as the previous example
 ```python
@@ -125,7 +126,7 @@ will pick a training set to have 100 examples.
 # Cross Validation Indicator Vector Usage
 Form the weight matrix `W` as a KxN `numpy` array. Be sure to map columns of `W` to your images in your data set somehow. Then just call `BalancedCrossValidation` as follows to create a balanced `F`-fold cross validation indicator vectors for training.
 ```python
-from RandomSplit import BalancedCrossValidation`
+from RandomSplit import BalancedCrossValidation
 
 F=5
 folds, residuals = BalancedCrossValidation(W, F)
